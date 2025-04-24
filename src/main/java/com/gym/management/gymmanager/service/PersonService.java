@@ -1,21 +1,19 @@
 package com.gym.management.gymmanager.service;
 
+import com.gym.management.gymmanager.cache.PersonCache;
+import com.gym.management.gymmanager.model.Gym;
 import com.gym.management.gymmanager.model.Person;
 import com.gym.management.gymmanager.model.Trainer;
-import com.gym.management.gymmanager.model.Gym;
+import com.gym.management.gymmanager.repository.GymRepository;
 import com.gym.management.gymmanager.repository.PersonRepository;
 import com.gym.management.gymmanager.repository.TrainerRepository;
-import com.gym.management.gymmanager.repository.GymRepository;
-import com.gym.management.gymmanager.cache.PersonCache;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-
 @Service
 public class PersonService {
-
     @Autowired
     private PersonRepository personRepository;
 
@@ -23,19 +21,17 @@ public class PersonService {
     private PersonCache personCache;
 
     @Autowired
-    private TrainerRepository trainerRepository; // Добавлен репозиторий для тренеров
+    private TrainerRepository trainerRepository;
 
     @Autowired
-    private GymRepository gymRepository; // Добавлен репозиторий для залов
+    private GymRepository gymRepository;
 
-    // Сохранение нового человека с кэшированием
     public Person savePerson(Person person) {
         Person saved = personRepository.save(person);
         personCache.putToIdCache(saved.getId(), saved); // Кэшируем новый объект
         return saved;
     }
 
-    // Получение человека по ID с кэшированием
     public Person getPersonById(Long id) {
         // Проверка кэша
         Person cachedPerson = personCache.getPersonByIdCache(id);
@@ -43,7 +39,6 @@ public class PersonService {
             return cachedPerson;
         }
 
-        // Если в кэше нет, ищем в базе данных
         Optional<Person> personOpt = personRepository.findById(id);
         if (personOpt.isPresent()) {
             Person person = personOpt.get();
@@ -53,7 +48,6 @@ public class PersonService {
         return null;
     }
 
-    // Удаление человека по ID и удаление из кэша
     public boolean deletePerson(Long id) {
         if (personRepository.existsById(id)) {
             personRepository.deleteById(id);
@@ -63,7 +57,6 @@ public class PersonService {
         return false;
     }
 
-    // Обновление данных человека с кэшированием
     public Person updatePerson(Long id, Person personDetails) {
         Optional<Person> optionalPerson = personRepository.findById(id);
         if (optionalPerson.isPresent()) {
@@ -76,14 +69,12 @@ public class PersonService {
             // Сохраняем обновленные данные
             Person updated = personRepository.save(person);
 
-            // Обновляем кэш
             personCache.putToIdCache(id, updated);
             return updated;
         }
         return null;
     }
 
-    // Привязка тренера к человеку
     public Person assignTrainerToPerson(Long personId, Long trainerId) {
         Optional<Person> personOpt = personRepository.findById(personId);
         if (personOpt.isPresent()) {
@@ -99,7 +90,6 @@ public class PersonService {
         return null;
     }
 
-    // Привязка зала к человеку
     public Person assignGymToPerson(Long personId, Long gymId) {
         Optional<Person> personOpt = personRepository.findById(personId);
         if (personOpt.isPresent()) {
@@ -115,17 +105,14 @@ public class PersonService {
         return null;
     }
 
-    // Получение людей по типу зала через JPQL запрос
     public List<Person> getPersonsByGymType(String gymType) {
         return personRepository.findByGymType(gymType);
     }
 
-    // Получение людей по типу зала через native SQL запрос
     public List<Person> getPersonsByGymTypeNative(String gymType) {
         return personRepository.findPersonsByGymTypeNative(gymType);
     }
 
-    // Получение всех людей
     public List<Person> getAllPeople() {
         return personRepository.findAll();
     }

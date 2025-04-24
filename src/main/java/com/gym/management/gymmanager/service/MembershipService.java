@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MembershipService {
-
     @Autowired
     private MembershipRepository membershipRepository;
 

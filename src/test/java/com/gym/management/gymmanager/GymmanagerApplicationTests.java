@@ -8,7 +8,6 @@ class GymmanagerApplicationTests {
 
 	@Test
 	void contextLoads() {
-	doSomething();
+		// тестируем, что контекст загружается корректно
 	}
-
 }
