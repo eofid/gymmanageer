@@ -21,21 +21,21 @@ public class TrainerController {
     @Autowired
     private TrainerService trainerService;
 
-    // Создание нового тренера
+    // 1. Создание нового тренера
     @PostMapping
     public ResponseEntity<Trainer> addTrainer(@RequestBody Trainer trainer) {
         Trainer savedTrainer = trainerService.saveTrainer(trainer);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedTrainer);
     }
 
-    // Получение всех тренеров
+    // 2. Получение всех тренеров
     @GetMapping
     public ResponseEntity<List<Trainer>> getAllTrainers() {
         List<Trainer> trainers = trainerService.getAllTrainers();
         return ResponseEntity.ok(trainers);
     }
 
-    // Получение тренера по ID
+    // 3. Получение тренера по ID
     @GetMapping("/{id}")
     public ResponseEntity<Trainer> getTrainerById(@PathVariable Long id) {
         Trainer trainer = trainerService.getTrainerById(id);
@@ -46,7 +46,7 @@ public class TrainerController {
         }
     }
 
-    // Обновление тренера
+    // 4. Обновление тренера
     @PutMapping("/{id}")
     public ResponseEntity<Trainer> updateTrainer(@PathVariable Long id, @RequestBody Trainer trainer) {
         Trainer updatedTrainer = trainerService.updateTrainer(id, trainer);
@@ -57,7 +57,7 @@ public class TrainerController {
         }
     }
 
-    // Удаление тренера
+    // 5. Удаление тренера
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTrainer(@PathVariable Long id) {
         boolean deleted = trainerService.deleteTrainer(id);

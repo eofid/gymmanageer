@@ -35,7 +35,7 @@ public class MembershipController {
         Person person = personService.getPersonById(personId);
         if (person == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Человек с ID " + personId + " не найден.");
+                    .body("Person with ID " + personId + " not found.");
         }
 
         membership.setPerson(person);
@@ -48,13 +48,13 @@ public class MembershipController {
     public ResponseEntity<?> getMembershipById(@PathVariable Long id) {
         Membership membership = membershipService.getMembershipById(id);
         return membership != null ? ResponseEntity.ok(membership)
-                : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Абонемент не найден");
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Membership not found.");
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteMembership(@PathVariable Long id) {
         boolean deleted = membershipService.deleteMembership(id);
-        return deleted ? ResponseEntity.ok("Абонемент удалён")
-                : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Абонемент не найден");
+        return deleted ? ResponseEntity.ok("Person delete")
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person not found");
     }
 }

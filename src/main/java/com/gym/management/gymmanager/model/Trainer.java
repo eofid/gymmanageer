@@ -19,12 +19,10 @@ public class Trainer {
     private String trainingType;
     private String gender;
 
-    // Связь с клиентами (persons)
     @OneToMany(mappedBy = "trainer")
     @JsonManagedReference
     private List<Person> persons = new ArrayList<>();
 
-    // Constructors, Getters, Setters
     public Trainer() {}
 
     public Long getId() {

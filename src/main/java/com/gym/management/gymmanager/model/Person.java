@@ -10,30 +10,26 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-
 @Entity
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Имя не может быть null")  // Поле не может быть null
-    @Size(min = 1, max = 100, message = "Имя должно быть между 1 и 100 символами")  // Длина имени
+    @NotNull(message = "Имя не может быть null")
+    @Size(min = 1, max = 100, message = "Имя должно быть между 1 и 100 символами")
     private String name;
     private String phoneNumber;
 
-    // Связь с тренером (trainer)
     @ManyToOne
     @JoinColumn(name = "trainer_id")
     @JsonBackReference
     private Trainer trainer;
 
-    // Связь с залом (gym)
     @ManyToOne
     @JoinColumn(name = "gym_id")
     private Gym gym;
 
-    // Constructors, Getters, Setters
     public Person() {}
 
     public Long getId() {

@@ -11,22 +11,19 @@ public class Gym {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String type;  // Тип зала (VIP, Premium, Basic)
-    private String address;  // Адрес
-    private String number;  // Номер зала
+    private String type;
+    private String address;
+    private String number;
 
-    // Конструктор по умолчанию
     public Gym() {
     }
 
-    // Конструктор с параметрами
     public Gym(String type, String address, String number) {
         this.type = type;
         this.address = address;
         this.number = number;
     }
 
-    // Геттеры и сеттеры
     public Long getId() {
         return id;
     }

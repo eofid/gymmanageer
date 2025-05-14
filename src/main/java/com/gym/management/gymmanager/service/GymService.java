@@ -12,22 +12,22 @@ public class GymService {
     @Autowired
     private GymRepository gymRepository;
 
-    // ✅ Сохранение зала
+    // 1. Сохранение зала
     public Gym saveGym(Gym gym) {
         return gymRepository.save(gym);
     }
 
-    // ✅ Получение всех залов
+    // 2. Получение всех залов
     public List<Gym> getAllGyms() {
         return gymRepository.findAll();
     }
 
-    // ✅ Получение зала по ID
+    // 3. Получение зала по ID
     public Gym getGymById(Long id) {
         return gymRepository.findById(id).orElse(null);
     }
 
-    // ✅ Обновление зала
+    // 4. Обновление зала
     public Gym updateGym(Long id, Gym gymDetails) {
         Optional<Gym> optionalGym = gymRepository.findById(id);
         if (optionalGym.isPresent()) {
@@ -40,7 +40,7 @@ public class GymService {
         return null;
     }
 
-    // ✅ Удаление зала
+    // 5. Удаление зала
     public boolean deleteGym(Long id) {
         if (gymRepository.existsById(id)) {
             gymRepository.deleteById(id);

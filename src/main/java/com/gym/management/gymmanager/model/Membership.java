@@ -15,7 +15,7 @@ public class Membership {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String type; // ВИП, Премиум, Базовый
+    private String type;
     private LocalDate startDate;
     private LocalDate endDate;
 
@@ -24,7 +24,6 @@ public class Membership {
     @JoinColumn(name = "person_id")
     private Person person;
 
-    // Constructors, Getters, Setters
     public Membership() {}
 
     public Long getId() {

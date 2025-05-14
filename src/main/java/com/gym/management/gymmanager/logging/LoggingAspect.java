@@ -1,36 +1,48 @@
 package com.gym.management.gymmanager.logging;
 
+import java.util.Arrays;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-
 @Aspect
 @Component
 public class LoggingAspect {
+    private final Logger logger;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    public LoggingAspect(Logger logger) {
+        this.logger = logger;
+    }
 
-    // 📌 Логирование всех вызовов методов в сервисах
+    public LoggingAspect() {
+        this(LoggerFactory.getLogger(LoggingAspect.class));
+    }
+
     @Before("execution(* com.gym.management.gymmanager.service..*(..))")
     public void logBeforeMethodCall(JoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        logger.info("Вызов метода: {} с аргументами: {}", signature.getMethod().getName(), Arrays.toString(joinPoint.getArgs()));
+        logger.info("Вызов метода: {} с аргументами: {}", signature.getMethod().getName(),
+                Arrays.toString(joinPoint.getArgs()));
     }
 
-    // 📌 Логирование успешных возвращаемых значений
-    @AfterReturning(pointcut = "execution(* com.gym.management.gymmanager.service..*(..))", returning = "result")
+    @AfterReturning(pointcut = "execution(* com.gym.management.gymmanager.service..*(..))",
+            returning = "result")
     public void logAfterReturning(JoinPoint joinPoint, Object result) {
-        logger.info("Метод {} успешно завершен. Возвращено: {}", joinPoint.getSignature().getName(), result);
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        logger.info("Метод {} успешно завершен. Возвращено: {}", signature.getMethod().getName(), result);
     }
 
-    // ⚠️ Логирование исключений
-    @AfterThrowing(pointcut = "execution(* com.gym.management.gymmanager..*(..))", throwing = "ex")
+    @AfterThrowing(pointcut = "execution(* com.gym.management.gymmanager..*(..))",
+            throwing = "ex")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable ex) {
-        logger.error("Метод {} выбросил исключение: {}", joinPoint.getSignature().getName(), ex.getMessage(), ex);
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        logger.error("Метод {} выбросил исключение: {}", signature.getMethod().getName(),
+                ex.getMessage(), ex);
     }
 }
