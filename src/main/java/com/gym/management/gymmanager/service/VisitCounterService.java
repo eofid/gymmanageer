@@ -1,8 +1,7 @@
 package com.gym.management.gymmanager.service;
 
-import org.springframework.stereotype.Service;
-
 import java.util.concurrent.atomic.AtomicInteger;
+import org.springframework.stereotype.Service;
 
 @Service
 public class VisitCounterService {

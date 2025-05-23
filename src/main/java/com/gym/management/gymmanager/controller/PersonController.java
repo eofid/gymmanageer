@@ -3,6 +3,7 @@ package com.gym.management.gymmanager.controller;
 import com.gym.management.gymmanager.cache.PersonCache;
 import com.gym.management.gymmanager.model.Person;
 import com.gym.management.gymmanager.service.PersonService;
+import com.gym.management.gymmanager.service.VisitCounterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -10,16 +11,10 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/persons")
 @Tag(name = "Персоны", description = "Управление клиентами спортзала")
@@ -29,6 +24,8 @@ public class PersonController {
 
     @Autowired
     private PersonCache personCache;
+    @Autowired
+    private VisitCounterService visitCounterService;
 
     @PostMapping
     @Operation(summary = "Создать нового клиента")
@@ -45,8 +42,10 @@ public class PersonController {
     @GetMapping("/{id}")
     @Operation(summary = "Получить клиента по ID")
     public ResponseEntity<Person> getPersonById(@PathVariable Long id) {
+        visitCounterService.increment();
         return ResponseEntity.ok(personService.getPersonById(id));
     }
+
 
     @GetMapping
     @Operation(summary = "Получить всех клиентов")
