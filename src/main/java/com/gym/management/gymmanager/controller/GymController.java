@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/gyms")
 public class GymController {
-    @Autowired
+
     private GymService gymService;
 
     // 1. Добавить новый зал
