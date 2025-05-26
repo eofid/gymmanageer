@@ -3,12 +3,10 @@ package com.gym.management.gymmanager.service;
 import com.gym.management.gymmanager.model.Trainer;
 import com.gym.management.gymmanager.repository.TrainerRepository;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TrainerService {
-    @Autowired
     private TrainerRepository trainerRepository;
 
     // 1. Сохранение нового тренера
