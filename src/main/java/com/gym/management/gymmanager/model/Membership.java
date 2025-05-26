@@ -24,7 +24,9 @@ public class Membership {
     @JoinColumn(name = "person_id")
     private Person person;
 
-    public Membership() {}
+    public Membership() {
+        // Required by JPA
+    }
 
     public Long getId() {
         return id;
