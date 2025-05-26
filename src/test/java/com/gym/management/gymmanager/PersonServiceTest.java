@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -119,7 +120,15 @@ class PersonServiceTest {
     @Test
     void testSavePeople_ValidationException_InvalidPerson() {
         Person invalidPerson = new Person();
-        assertThrows(ValidationException.class, () -> personService.savePeople(Collections.singletonList(invalidPerson)));
+        // Преобразуем список invalidPeople в строки заранее, чтобы убрать вызов getId в лямбде при выбросе исключения
+        List<Person> invalidList = Collections.singletonList(invalidPerson);
+        List<String> invalidIds = invalidList.stream()
+            .map(p -> "ID: " + p.getId())
+            .collect(Collectors.toList());
+
+        ValidationException exception = assertThrows(ValidationException.class, () -> personService.savePeople(invalidList));
+        // Можно проверить, что сообщение содержит Idы, но в тесте не обязательно
+        assertTrue(exception.getMessage().contains("Некоторые клиенты имеют некорректные данные"));
     }
 
     @Test
@@ -138,7 +147,6 @@ class PersonServiceTest {
 
         verify(personRepository, times(1)).findAll();
     }
-
 
     @Test
     void testUpdatePerson_Success() {
