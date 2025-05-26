@@ -54,12 +54,15 @@ public class LogController {
                 if (file == null || !file.exists()) {
                     return ResponseEntity.status(404).body("Файл не найден.");
                 }
+
+                // Очистка имени файла от потенциально опасных символов
+                String safeFileName = file.getName().replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
+
                 return ResponseEntity.ok()
-                        .header("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"")
+                        .header("Content-Disposition", "attachment; filename=\"" + safeFileName + "\"")
                         .body(new FileSystemResource(file));
             default:
                 return ResponseEntity.status(500).body("Неизвестный статус задачи.");
         }
     }
-
 }
