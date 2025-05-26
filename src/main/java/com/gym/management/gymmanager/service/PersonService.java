@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PersonService {
+    private static final String CLIENT_NOT_FOUND_PREFIX = "Клиент с ID ";
+    private static final String NOT_FOUND_SUFFIX = " не найден";
+
     private final PersonRepository personRepository;
     private final PersonCache personCache;
     private final TrainerRepository trainerRepository;
@@ -50,7 +53,7 @@ public class PersonService {
                     personCache.putToIdCache(id, person);
                     return person;
                 })
-                .orElseThrow(() -> new ResourceNotFoundException("Клиент с ID " + id + " не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException(CLIENT_NOT_FOUND_PREFIX + id + NOT_FOUND_SUFFIX));
     }
 
     public List<Person> savePeople(List<Person> people) {
@@ -58,7 +61,6 @@ public class PersonService {
             throw new ValidationException("Список клиентов пустой");
         }
 
-        // Проверка и фильтрация с лямбдой
         List<Person> invalidPeople = people.stream()
                 .filter(person -> person.getName() == null || person.getName().trim().isEmpty())
                 .toList();
@@ -70,9 +72,9 @@ public class PersonService {
                             .toList());
         }
 
-        return personRepository.saveAll(people).stream()
-                .peek(person -> personCache.putToIdCache(person.getId(), person))
-                .toList();
+        List<Person> savedPeople = personRepository.saveAll(people);
+        savedPeople.forEach(person -> personCache.putToIdCache(person.getId(), person));
+        return savedPeople;
     }
 
     public boolean deletePerson(Long id) {
@@ -82,7 +84,7 @@ public class PersonService {
         }
 
         if (!personRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Клиент с ID " + id + " не найден");
+            throw new ResourceNotFoundException(CLIENT_NOT_FOUND_PREFIX + id + NOT_FOUND_SUFFIX);
         }
 
         personRepository.deleteById(id);
@@ -91,7 +93,7 @@ public class PersonService {
 
     public Person updatePerson(Long id, Person personDetails) {
         Person person = personRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Клиент с ID " + id + " не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException(CLIENT_NOT_FOUND_PREFIX + id + NOT_FOUND_SUFFIX));
 
         if (personDetails.getName() == null || personDetails.getName().trim().isEmpty()) {
             throw new ValidationException("Имя клиента обязательно");
@@ -109,10 +111,10 @@ public class PersonService {
 
     public Person assignTrainerToPerson(Long personId, Long trainerId) {
         Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new ResourceNotFoundException("Клиент с ID " + personId + " не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException(CLIENT_NOT_FOUND_PREFIX + personId + NOT_FOUND_SUFFIX));
 
         Trainer trainer = trainerRepository.findById(trainerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Тренер с ID " + trainerId + " не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("Тренер с ID " + trainerId + NOT_FOUND_SUFFIX));
 
         person.setTrainer(trainer);
         Person updated = personRepository.save(person);
@@ -122,10 +124,10 @@ public class PersonService {
 
     public Person assignGymToPerson(Long personId, Long gymId) {
         Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new ResourceNotFoundException("Клиент с ID " + personId + " не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException(CLIENT_NOT_FOUND_PREFIX + personId + NOT_FOUND_SUFFIX));
 
         Gym gym = gymRepository.findById(gymId)
-                .orElseThrow(() -> new ResourceNotFoundException("Спортзал с ID " + gymId + " не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("Спортзал с ID " + gymId + NOT_FOUND_SUFFIX));
 
         person.setGym(gym);
         Person updated = personRepository.save(person);
