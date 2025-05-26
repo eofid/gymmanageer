@@ -30,7 +30,7 @@ public class MembershipController {
 
     @PostMapping("/person/{personId}")
     @Transactional
-    public ResponseEntity<?> assignMembershipToPerson(@PathVariable Long personId,
+    public ResponseEntity<Object> assignMembershipToPerson(@PathVariable Long personId,
                                                       @RequestBody Membership membership) {
         Person person = personService.getPersonById(personId);
         if (person == null) {
@@ -45,14 +45,14 @@ public class MembershipController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getMembershipById(@PathVariable Long id) {
+    public ResponseEntity<Object> getMembershipById(@PathVariable Long id) {
         Membership membership = membershipService.getMembershipById(id);
         return membership != null ? ResponseEntity.ok(membership)
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Membership not found.");
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteMembership(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteMembership(@PathVariable Long id) {
         boolean deleted = membershipService.deleteMembership(id);
         return deleted ? ResponseEntity.ok("Person delete")
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person not found");
