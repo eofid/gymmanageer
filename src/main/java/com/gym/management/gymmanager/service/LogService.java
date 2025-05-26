@@ -1,6 +1,8 @@
 package com.gym.management.gymmanager.service;
 
 import com.gym.management.gymmanager.logging.AsyncLogTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class LogService {
+
+    private static final Logger logger = LoggerFactory.getLogger(LogService.class);
     private static final String LOG_DIRECTORY = "logs/";
     private final Map<String, AsyncLogTask> taskMap = new ConcurrentHashMap<>();
 
@@ -24,9 +28,9 @@ public class LogService {
     public String startAsyncLogCreation(String date) {
         String taskId = UUID.randomUUID().toString();
         AsyncLogTask task = new AsyncLogTask();
-        task.setStatus(AsyncLogTask.Status.IN_PROGRESS); // Устанавливаем статус сразу
+        task.setStatus(AsyncLogTask.Status.IN_PROGRESS);
         taskMap.put(taskId, task);
-        self.createLogFileAsync(taskId, date); // Асинхронный вызов через прокси
+        self.createLogFileAsync(taskId, date);
         return taskId;
     }
 
@@ -35,7 +39,7 @@ public class LogService {
         AsyncLogTask task = taskMap.get(taskId);
 
         try {
-            Thread.sleep(20000); // Задержка 20 секунд для имитации обработки
+            Thread.sleep(20000); // Симуляция задержки обработки
 
             File logDirectory = new File(LOG_DIRECTORY);
             File[] logFiles = logDirectory.listFiles((dir, name) ->
@@ -43,18 +47,18 @@ public class LogService {
 
             if (logFiles == null || logFiles.length == 0) {
                 task.setStatus(AsyncLogTask.Status.FAILED);
-                System.out.println("No log files found in the directory: " + logDirectory.getAbsolutePath());
+                logger.warn("No log files found in the directory: {}", logDirectory.getAbsolutePath());
                 return;
             }
 
             File filteredFile = File.createTempFile("filtered-log-", ".log");
-            System.out.println("Temporary filtered log file created at: " + filteredFile.getAbsolutePath());
+            logger.info("Temporary filtered log file created at: {}", filteredFile.getAbsolutePath());
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filteredFile))) {
                 boolean foundLines = false;
 
                 for (File logFile : logFiles) {
-                    System.out.println("Processing log file: " + logFile.getName());
+                    logger.info("Processing log file: {}", logFile.getName());
 
                     try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
                         String line;
@@ -69,14 +73,14 @@ public class LogService {
                 }
 
                 if (!foundLines) {
-                    System.out.println("No matching lines found for date: " + date);
+                    logger.info("No matching lines found for date: {}", date);
                 }
 
                 task.setFilePath(filteredFile.getAbsolutePath());
                 task.setStatus(AsyncLogTask.Status.COMPLETED);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception occurred while creating log file asynchronously", e);
             task.setStatus(AsyncLogTask.Status.FAILED);
         }
     }
@@ -93,7 +97,6 @@ public class LogService {
         if (task.getStatus() == AsyncLogTask.Status.COMPLETED) {
             return new File(task.getFilePath());
         }
-        return null; // Файл ещё не готов — вернём null, чтобы контроллер отдал 404
+        return null;
     }
-
 }
