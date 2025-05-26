@@ -28,9 +28,11 @@ public class LoggingAspect {
     @Before("execution(* com.gym.management.gymmanager.service..*(..))")
     public void logBeforeMethodCall(JoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        logger.info("Вызов метода: {} с аргументами: {}", signature.getMethod().getName(),
+        if (logger.isInfoEnabled()) {
+    logger.info("Вызов метода: {} с аргументами: {}", 
+                signature.getMethod().getName(),
                 Arrays.toString(joinPoint.getArgs()));
-    }
+}
 
     @AfterReturning(pointcut = "execution(* com.gym.management.gymmanager.service..*(..))",
             returning = "result")
