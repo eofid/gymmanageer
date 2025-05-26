@@ -23,7 +23,9 @@ public class Trainer {
     @JsonManagedReference
     private List<Person> persons = new ArrayList<>();
 
-    public Trainer() {}
+    public Trainer() {
+        // Required by JPA
+    }
 
     public Long getId() {
         return id;
