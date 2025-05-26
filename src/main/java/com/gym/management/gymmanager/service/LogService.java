@@ -14,11 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class LogService {
-
     private static final Logger logger = LoggerFactory.getLogger(LogService.class);
     private static final String LOG_DIRECTORY = "logs/";
-    private final Map<String, AsyncLogTask> taskMap = new ConcurrentHashMap<>();
 
+    private final Map<String, AsyncLogTask> taskMap = new ConcurrentHashMap<>();
     private final LogService self;
 
     public LogService(@Lazy LogService self) {
@@ -30,7 +29,7 @@ public class LogService {
         AsyncLogTask task = new AsyncLogTask();
         task.setStatus(AsyncLogTask.Status.IN_PROGRESS);
         taskMap.put(taskId, task);
-        self.createLogFileAsync(taskId, date);
+        self.createLogFileAsync(taskId, date); // Асинхронный вызов через прокси
         return taskId;
     }
 
@@ -39,7 +38,7 @@ public class LogService {
         AsyncLogTask task = taskMap.get(taskId);
 
         try {
-            Thread.sleep(20000); // Симуляция задержки обработки
+            Thread.sleep(20000); // Задержка 20 секунд для имитации обработки
 
             File logDirectory = new File(LOG_DIRECTORY);
             File[] logFiles = logDirectory.listFiles((dir, name) ->
@@ -79,8 +78,12 @@ public class LogService {
                 task.setFilePath(filteredFile.getAbsolutePath());
                 task.setStatus(AsyncLogTask.Status.COMPLETED);
             }
+        } catch (InterruptedException e) {
+            logger.warn("Log file generation interrupted", e);
+            Thread.currentThread().interrupt(); // <- корректная обработка прерывания
+            task.setStatus(AsyncLogTask.Status.FAILED);
         } catch (Exception e) {
-            logger.error("Exception occurred while creating log file asynchronously", e);
+            logger.error("Exception during log file generation", e);
             task.setStatus(AsyncLogTask.Status.FAILED);
         }
     }
