@@ -3,7 +3,6 @@ package com.gym.management.gymmanager.controller;
 import com.gym.management.gymmanager.model.Gym;
 import com.gym.management.gymmanager.service.GymService;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
