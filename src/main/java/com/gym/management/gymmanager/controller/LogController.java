@@ -37,7 +37,7 @@ public class LogController {
     }
 
     @GetMapping("/download/{taskId}")
-    public ResponseEntity<?> downloadFile(@PathVariable String taskId) {
+    public ResponseEntity<Object> downloadFile(@PathVariable String taskId) {
         AsyncLogTask task = logService.getTaskStatus(taskId);
 
         if (task == null) {
