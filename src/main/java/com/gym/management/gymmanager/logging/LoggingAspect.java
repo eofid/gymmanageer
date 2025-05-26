@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 public class LoggingAspect {
     private final Logger logger;
 
+    @Autowired
     public LoggingAspect(Logger logger) {
         this.logger = logger;
     }
