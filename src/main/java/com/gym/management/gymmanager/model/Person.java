@@ -30,7 +30,9 @@ public class Person {
     @JoinColumn(name = "gym_id")
     private Gym gym;
 
-    public Person() {}
+    public Person() {
+        // Required by JPA
+    }
 
     public Long getId() {
         return id;
