@@ -9,23 +9,27 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/persons")
 @Tag(name = "Персоны", description = "Управление клиентами спортзала")
 public class PersonController {
-    @Autowired
-    private PersonService personService;
 
-    @Autowired
-    private PersonCache personCache;
-    @Autowired
-    private VisitCounterService visitCounterService;
+    private final PersonService personService;
+    private final PersonCache personCache;
+    private final VisitCounterService visitCounterService;
+
+    public PersonController(PersonService personService,
+                            PersonCache personCache,
+                            VisitCounterService visitCounterService) {
+        this.personService = personService;
+        this.personCache = personCache;
+        this.visitCounterService = visitCounterService;
+    }
+
 
     @PostMapping
     @Operation(summary = "Создать нового клиента")
