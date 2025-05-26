@@ -29,7 +29,7 @@ public class LogService {
         AsyncLogTask task = new AsyncLogTask();
         task.setStatus(AsyncLogTask.Status.IN_PROGRESS);
         taskMap.put(taskId, task);
-        self.createLogFileAsync(taskId, date); // Асинхронный вызов через прокси
+        self.createLogFileAsync(taskId, date);
         return taskId;
     }
 
@@ -38,7 +38,7 @@ public class LogService {
         AsyncLogTask task = taskMap.get(taskId);
 
         try {
-            Thread.sleep(20000); // Задержка 20 секунд для имитации обработки
+            Thread.sleep(20000);
 
             File logDirectory = new File(LOG_DIRECTORY);
             File[] logFiles = logDirectory.listFiles((dir, name) ->
@@ -51,7 +51,7 @@ public class LogService {
             }
 
             File filteredFile = File.createTempFile("filtered-log-", ".log");
-            logger.info("Temporary filtered log file created at: {}", filteredFile.getAbsolutePath());
+            logger.info("Temporary filtered log file created.");
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filteredFile))) {
                 boolean foundLines = false;
@@ -72,7 +72,7 @@ public class LogService {
                 }
 
                 if (!foundLines) {
-                    logger.info("No matching lines found for date: {}", date);
+                    logger.info("No matching lines found for the specified date.");
                 }
 
                 task.setFilePath(filteredFile.getAbsolutePath());
@@ -80,7 +80,7 @@ public class LogService {
             }
         } catch (InterruptedException e) {
             logger.warn("Log file generation interrupted", e);
-            Thread.currentThread().interrupt(); // <- корректная обработка прерывания
+            Thread.currentThread().interrupt();
             task.setStatus(AsyncLogTask.Status.FAILED);
         } catch (Exception e) {
             logger.error("Exception during log file generation", e);
