@@ -50,9 +50,8 @@ public class LogService {
                 return;
             }
 
-            File filteredFile = File.createTempFile("filtered-log-", ".log");
+            File.createTempFile("filtered-log-", ".log", new File(LOG_DIRECTORY));
             logger.info("Temporary filtered log file created.");
-
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filteredFile))) {
                 boolean foundLines = false;
 
